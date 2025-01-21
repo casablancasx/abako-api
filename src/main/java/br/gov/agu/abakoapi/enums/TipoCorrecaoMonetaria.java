@@ -3,8 +3,9 @@ package br.gov.agu.abakoapi.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
+
 @Getter
+@AllArgsConstructor
 public enum TipoCorrecaoMonetaria {
 
     TIPO2("INPC"),
@@ -14,12 +15,4 @@ public enum TipoCorrecaoMonetaria {
     private String descricao;
 
 
-    public static TipoCorrecaoMonetaria getTipoCorrecaoMonetaria(String descricao) {
-        for (TipoCorrecaoMonetaria tipo : TipoCorrecaoMonetaria.values()) {
-            if (tipo.getDescricao().equals(descricao)) {
-                return tipo;
-            }
-        }
-        return null;
-    }
 }

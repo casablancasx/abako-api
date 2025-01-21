@@ -3,8 +3,9 @@ package br.gov.agu.abakoapi.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
+
 @Getter
+@AllArgsConstructor
 public enum TipoJuros {
 
     TIPO2("JUROS + SELIC");

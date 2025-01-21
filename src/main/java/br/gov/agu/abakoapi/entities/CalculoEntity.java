@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_calculo")
@@ -18,9 +19,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class CalculoEntity {
 
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long calculo_id;
+    @Column(name = "calculo_id", nullable = false, updatable = false)
+    @Id
+    private Long calculoId;
 
     private String numeroProcesso;
 
@@ -44,8 +46,10 @@ public class CalculoEntity {
 
     private int porcentagemRmi;
 
+    @Enumerated(EnumType.STRING)
     private TipoJuros tipoJuros;
 
+    @Enumerated(EnumType.STRING)
     private TipoCorrecaoMonetaria tipoCorrecao;
 
     private LocalDate atualizarAte;
@@ -56,6 +60,7 @@ public class CalculoEntity {
 
     private boolean isAlcada;
 
+    @Enumerated(EnumType.STRING)
     private BeneficiosEnum beneficio;
 
     private String nb;
@@ -64,4 +69,6 @@ public class CalculoEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
+    @OneToMany(mappedBy = "calculo")
+    private List<BeneficioInacumaladosEntity> beneficiosInacumulados;
 }
