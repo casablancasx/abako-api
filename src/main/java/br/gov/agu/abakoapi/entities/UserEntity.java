@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -19,5 +20,8 @@ public class UserEntity {
     private UUID user_id;
 
     private String name;
+
+    @OneToMany(mappedBy = "user")
+    private List<CalculoEntity> calculos;
 
 }
