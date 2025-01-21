@@ -20,7 +20,6 @@ public class BeneficioInacumaladosEntity {
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long beneficioInacumaladosId;
 
-
     @Enumerated(EnumType.STRING)
     private BeneficiosEnum beneficio;
 
