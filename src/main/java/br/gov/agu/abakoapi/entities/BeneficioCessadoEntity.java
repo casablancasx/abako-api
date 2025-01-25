@@ -10,15 +10,15 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "tb_beneficio_inacumalados")
+@Table(name = "tb_beneficio_cessado")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BeneficioInacumaladosEntity {
+public class BeneficioCessadoEntity {
 
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long beneficioInacumaladosId;
+    private Long beneficioCessadoId;
 
     @Enumerated(EnumType.STRING)
     private BeneficiosEnum beneficio;
