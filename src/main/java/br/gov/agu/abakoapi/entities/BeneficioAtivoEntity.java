@@ -19,7 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 public class BeneficioAtivoEntity {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long beneficioAtivoId;
@@ -66,6 +65,5 @@ public class BeneficioAtivoEntity {
     @ManyToOne
     @JoinColumn(name = "calculo_id")
     private CalculoEntity calculo;
-
 
 }

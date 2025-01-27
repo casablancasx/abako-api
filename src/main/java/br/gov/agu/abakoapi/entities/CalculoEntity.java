@@ -1,5 +1,6 @@
 package br.gov.agu.abakoapi.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -25,10 +27,20 @@ public class CalculoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long calculoId;
 
+    private String nomeParte;
+
+    private String cpf;
+
+    private String numeroProcessoJudicial;
+
+    private LocalDate dataAjuizamento;
+
     @OneToMany(mappedBy = "calculo")
+    @JsonBackReference
     private List<BeneficioAtivoEntity> beneficioAtivos;
 
     @OneToMany(mappedBy = "calculo")
+    @JsonBackReference
     private List<BeneficioCessadoEntity> beneficioCessados;
 
     @ManyToOne
