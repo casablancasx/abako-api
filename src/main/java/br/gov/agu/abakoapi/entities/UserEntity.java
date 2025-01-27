@@ -22,6 +22,8 @@ public class UserEntity {
 
     private String name;
 
+    private Integer tempoVerificarDossie;
+
     @OneToMany(mappedBy = "user")
     private List<CalculoEntity> calculos;
 }

@@ -27,13 +27,13 @@ public class CalculoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long calculoId;
 
-    private String nomeParte;
+    private String nomeParte; //ja foi
 
-    private String cpf;
+    private String cpf; //ja foi
 
-    private String numeroProcessoJudicial;
+    private String numeroProcessoJudicial;  // ja foi
 
-    private LocalDate dataAjuizamento;
+    private LocalDate dataAjuizamento; //ja foi
 
     @OneToMany(mappedBy = "calculo")
     @JsonBackReference
