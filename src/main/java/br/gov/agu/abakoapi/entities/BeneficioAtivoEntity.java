@@ -23,12 +23,6 @@ public class BeneficioAtivoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long beneficioAtivoId;
 
-    private String numeroProcesso;
-
-    private String nomeParte;
-
-    private LocalDate dataAjuizamento;
-
     private LocalDate inicioCalculo;
 
     private LocalDate fimCalculo;
@@ -37,21 +31,7 @@ public class BeneficioAtivoEntity {
 
     private BigDecimal rmi;
 
-    private LocalDate honorariosAdvocaticiosAte;
-
-    private int percentualHonorariosAdvocaticios;
-
-    private int acordo;
-
-    private int porcentagemRmi;
-
-    @Enumerated(EnumType.STRING)
-    private TipoJuros tipoJuros;
-
-    @Enumerated(EnumType.STRING)
-    private TipoCorrecaoMonetaria tipoCorrecao;
-
-    private LocalDate atualizarAte;
+    private Integer porcentagemRmi;
 
     private LocalDate dib;
 

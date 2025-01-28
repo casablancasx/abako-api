@@ -1,14 +1,9 @@
 package br.gov.agu.abakoapi.entities;
 
+import br.gov.agu.abakoapi.enums.TipoCorrecaoMonetaria;
+import br.gov.agu.abakoapi.enums.TipoJuros;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,13 +22,21 @@ public class CalculoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long calculoId;
 
-    private String nomeParte; //ja foi
+    private String nomeParte;
 
-    private String cpf; //ja foi
+    private String cpf;
 
-    private String numeroProcessoJudicial;  // ja foi
+    private String numeroProcessoJudicial;
 
-    private LocalDate dataAjuizamento; //ja foi
+    private LocalDate dataAjuizamento;
+
+    private LocalDate honorariosAdvocaticiosAte;
+
+    private Integer percentualHonorariosAdvocaticios;
+
+    private Integer acordo;
+
+    private LocalDate atualizarAte;
 
     @OneToMany(mappedBy = "calculo")
     @JsonBackReference

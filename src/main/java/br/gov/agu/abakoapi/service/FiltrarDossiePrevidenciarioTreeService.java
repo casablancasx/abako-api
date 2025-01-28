@@ -31,7 +31,6 @@ public class FiltrarDossiePrevidenciarioTreeService {
         calculoEntity.setCpf(cpf);
 
         return calculoEntity;
-
     }
 
 

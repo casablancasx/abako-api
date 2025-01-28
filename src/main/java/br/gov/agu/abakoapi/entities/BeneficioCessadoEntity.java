@@ -29,13 +29,13 @@ public class BeneficioCessadoEntity {
 
     private BigDecimal rmi;
 
-    private int porcentagemRmi;
+    private Integer porcentagemRmi;
 
     private String nb;
 
     private LocalDate dib;
 
-    private Long dibAnterior;
+    private LocalDate dibAnterior;
 
     @ManyToOne
     @JoinColumn(name = "calculo_id")

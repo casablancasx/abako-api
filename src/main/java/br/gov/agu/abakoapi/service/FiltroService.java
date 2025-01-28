@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
+
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +22,7 @@ public class FiltroService {
 
     private final UserRepository userRepository;
 
+    private final UserService userService;
     private final FiltrarDossiePrevidenciarioTreeService filtrarDossiePrevidenciarioTreeService;
 
     private final WebClient webClient;
@@ -44,12 +45,17 @@ public class FiltroService {
 
         assert mapper != null;
         JsonNode root = mapper.readTree(mapper.writeValueAsString(mapper));
-        UserEntity user = validarUsuario(requestDTO);
+        UserEntity user = userService.validarUsuario(requestDTO);
+        CalculoEntity calculo = new CalculoEntity();
+
+        JsonNode dossiePrevidenciarioTree = root.get("DossiePrevidenciario");
+        calculo = filtrarDossiePrevidenciarioTreeService.filtrarDossiePrevidenciarioTree(calculo, dossiePrevidenciarioTree);
+        calculo.setUser(user);
+
+        FiltroResponseDTO responseDTO = new FiltroResponseDTO();
+        responseDTO.setCalculo(calculo);
 
 
-
-
-        JsonNode processoTree = root.get("Processo");
 
 
 
@@ -65,22 +71,4 @@ public class FiltroService {
 
 
 
-    private UserEntity cadastrarNovoUsuario(FiltroRequestDTO requestDTO) {
-        UserEntity novoUsuario = new UserEntity();
-        novoUsuario.setUserId(requestDTO.getUserId());
-        novoUsuario.setTempoVerificarDossie(60);
-        novoUsuario.setName(requestDTO.getNome());
-        return userRepository.save(novoUsuario);
-    }
-
-    private boolean isNovoUsuario(FiltroRequestDTO requestDTO) {
-        return !userRepository.existsById(requestDTO.getUserId());
-    }
-
-    private UserEntity validarUsuario(FiltroRequestDTO requestDTO) {
-       if (isNovoUsuario(requestDTO)) {
-            return cadastrarNovoUsuario(requestDTO);
-        }
-        return userRepository.findById(requestDTO.getUserId()).get();
-    }
 }
