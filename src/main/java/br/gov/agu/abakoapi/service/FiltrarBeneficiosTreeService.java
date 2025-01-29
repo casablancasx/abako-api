@@ -1,11 +1,12 @@
 package br.gov.agu.abakoapi.service;
 
-import br.gov.agu.abakoapi.entities.BeneficioAtivoEntity;
-import br.gov.agu.abakoapi.entities.BeneficioCessadoEntity;
-import br.gov.agu.abakoapi.entities.CalculoEntity;
+import br.gov.agu.abakoapi.entities.*;
 import br.gov.agu.abakoapi.enums.BeneficiosEnum;
 import br.gov.agu.abakoapi.enums.StatusBeneficio;
+import br.gov.agu.abakoapi.repositories.BeneficioRepository;
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,65 +14,71 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Service
+@RequiredArgsConstructor
 public class FiltrarBeneficiosTreeService {
 
 
+    private final BeneficioRepository beneficioRepository;
+
     public CalculoEntity filtrarBeneficiosTree(JsonNode beneficiosTree, CalculoEntity calculoEntity) {
         LocalDate dataAjuizamento = calculoEntity.getDataAjuizamento();
-        List<BeneficioCessadoEntity> beneficiosCessados = filtrarBeneficioCessado(beneficiosTree);
         List<BeneficioAtivoEntity> beneficiosAtivos = filtrarBeneficioAtivo(beneficiosTree,dataAjuizamento);
-        calculoEntity.setBeneficioAtivos(beneficiosAtivos);
-        calculoEntity.setBeneficioCessados(beneficiosCessados);
 
+        for (BeneficioAtivoEntity beneficioAtivo : beneficiosAtivos) {
+            List<String> nomesBeneficiosInacumuladosDoAtivo = buscarNomesBeneficiosInacumulados(beneficioAtivo.getBeneficio());
+            List<BeneficioCessadoEntity> beneficioCessados = buscarBeneficioCessadosInacumulados(nomesBeneficiosInacumuladosDoAtivo, beneficioAtivo, beneficiosTree);
+            beneficioAtivo.setBeneficioCessados(beneficioCessados);
+        }
+
+        calculoEntity.setBeneficioAtivos(beneficiosAtivos);
         return calculoEntity;
     }
 
+    private List<BeneficioCessadoEntity> buscarBeneficioCessadosInacumulados(List<String> nomesBeneficiosInacumuladosDoAtivo, BeneficioAtivoEntity beneficioAtivo, JsonNode beneficiosTree) {
+        List<BeneficioCessadoEntity> beneficioCessadoEntities = new ArrayList<>();
 
-
-
-    public List<BeneficioCessadoEntity> filtrarBeneficioCessado(JsonNode beneficiosTree) {
-
-        List<JsonNode> beneficiosCessados = new ArrayList<>();
-        List<BeneficioCessadoEntity> beneficiosCessadosEntity = new ArrayList<>();
-
-        for (JsonNode beneficio : beneficiosTree) {
-            StatusBeneficio statusBeneficio = StatusBeneficio.valueOf(beneficio.get("status").asText());
-            if (statusBeneficio.equals(StatusBeneficio.CESSADO)) {
-                beneficiosCessados.add(beneficio);
-            }
-        }
-
-        mapJsonNodeToBeneficioCessado(beneficiosCessados, beneficiosCessadosEntity);
-
-        return beneficiosCessadosEntity;
-    }
-
-    private static void mapJsonNodeToBeneficioCessado(List<JsonNode> beneficiosCessados, List<BeneficioCessadoEntity> beneficiosCessadosEntity) {
-        for (JsonNode beneficio : beneficiosCessados) {
-            BeneficioCessadoEntity beneficioCessadoEntity = new BeneficioCessadoEntity();
-            BeneficiosEnum beneficioEnum = BeneficiosEnum.valueOf(beneficio.get("especie").asText());
+        for(JsonNode beneficio: beneficiosTree){
+            StatusBeneficio status = StatusBeneficio.valueOf(beneficio.get("status").asText());
             LocalDate inicioDesconto = OffsetDateTime.parse(beneficio.get("DIB").asText()).toLocalDate();
-            LocalDate fimDesconto = OffsetDateTime.parse(beneficio.get("DIP").asText()).toLocalDate().minusDays(1);
-            BigDecimal rmi = BigDecimal.valueOf(beneficio.get("RMI").asDouble());
-            String nb = beneficio.get("NB").asText();
-            LocalDate dib = OffsetDateTime.parse(beneficio.get("DIB").asText()).toLocalDate();
-            LocalDate dibAnterior = OffsetDateTime.parse(beneficio.get("dataNBAnterior").asText()).toLocalDate();
+            LocalDate inicioCalculo = beneficioAtivo.getInicioCalculo();
+            LocalDate fimCalculo = beneficioAtivo.getFimCalculo();
 
-            beneficioCessadoEntity.setBeneficio(beneficioEnum);
-            beneficioCessadoEntity.setInicioDesconto(inicioDesconto);
-            beneficioCessadoEntity.setFimDesconto(fimDesconto);
-            beneficioCessadoEntity.setRmi(rmi);
-            beneficioCessadoEntity.setPorcentagemRmi(null);
-            beneficioCessadoEntity.setNb(nb);
-            beneficioCessadoEntity.setDib(dib);
-            beneficioCessadoEntity.setDibAnterior(dibAnterior);
+            if (status.equals(StatusBeneficio.CESSADO) && isInicioDescontoDentroPeriodoDoBeneficioAtivo(inicioDesconto, inicioCalculo, fimCalculo)){
+                BeneficioCessadoEntity beneficioCessado = new BeneficioCessadoEntity();
+                beneficioCessado.setBeneficio(BeneficiosEnum.valueOf(beneficio.get("especie").asText()));
+                beneficioCessado.setInicioDesconto(inicioDesconto);
+                beneficioCessado.setFimDesconto(OffsetDateTime.parse(beneficio.get("DIP").asText()).toLocalDate().minusDays(1));
+                beneficioCessado.setRmi(BigDecimal.valueOf(beneficio.get("RMI").asDouble()));
+                beneficioCessado.setPorcentagemRmi(null);
+                beneficioCessado.setNb(beneficio.get("NB").asText());
+                beneficioCessado.setDib(OffsetDateTime.parse(beneficio.get("DIB").asText()).toLocalDate());
+                beneficioCessado.setDibAnterior(OffsetDateTime.parse(beneficio.get("dataNBAnterior").asText()).toLocalDate());
+                beneficioCessado.setBeneficioAtivo(beneficioAtivo);
 
-            beneficiosCessadosEntity.add(beneficioCessadoEntity);
+                beneficioCessadoEntities.add(beneficioCessado);
+            }
+
+
         }
+        return beneficioCessadoEntities;
+    }
+
+    private boolean isInicioDescontoDentroPeriodoDoBeneficioAtivo(LocalDate inicioDesconto, LocalDate inicioCalculo, LocalDate fimCalculo) {
+        return inicioDesconto.isAfter(inicioCalculo) && inicioDesconto.isBefore(fimCalculo);
     }
 
 
-    public List<BeneficioAtivoEntity> filtrarBeneficioAtivo(JsonNode beneficiosTree, LocalDate dataAjuizamento) {
+    private List<String> buscarNomesBeneficiosInacumulados(BeneficiosEnum beneficioEnum) {
+        return beneficioRepository.findByNome(beneficioEnum.getNome())
+                .stream()
+                .map(BeneficioEntity::getNome)
+                .toList();
+    }
+
+
+    private List<BeneficioAtivoEntity> filtrarBeneficioAtivo(JsonNode beneficiosTree, LocalDate dataAjuizamento) {
 
         List<JsonNode> beneficiosAtivos = new ArrayList<>();
         List<BeneficioAtivoEntity> beneficiosAtivosEntity = new ArrayList<>();

@@ -42,9 +42,7 @@ public class CalculoEntity {
     @JsonBackReference
     private List<BeneficioAtivoEntity> beneficioAtivos;
 
-    @OneToMany(mappedBy = "calculo")
-    @JsonBackReference
-    private List<BeneficioCessadoEntity> beneficioCessados;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")

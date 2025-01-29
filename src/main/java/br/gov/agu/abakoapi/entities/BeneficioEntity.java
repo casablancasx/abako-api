@@ -25,7 +25,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BeneficioModel {
+public class BeneficioEntity {
 
     @Id
     private Long id;
@@ -39,5 +39,5 @@ public class BeneficioModel {
             joinColumns = @JoinColumn(name = "beneficio_id"),
             inverseJoinColumns = @JoinColumn(name = "inacumulavel_id"))
     @JsonManagedReference
-    private List<BeneficioInacumulavelModel> beneficiosInacumulaveis;
+    private List<BeneficioInacumulavelEntity> beneficiosInacumulaveis;
 }

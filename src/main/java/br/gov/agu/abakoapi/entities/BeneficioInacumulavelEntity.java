@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BeneficioInacumulavelModel {
+public class BeneficioInacumulavelEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,5 +24,5 @@ public class BeneficioInacumulavelModel {
 
     @ManyToMany(mappedBy = "beneficiosInacumulaveis")
     @JsonBackReference
-    private List<BeneficioModel> beneficios;
+    private List<BeneficioEntity> beneficios;
 }

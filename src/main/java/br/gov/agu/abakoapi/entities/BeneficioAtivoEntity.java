@@ -1,8 +1,6 @@
 package br.gov.agu.abakoapi.entities;
 
 import br.gov.agu.abakoapi.enums.BeneficiosEnum;
-import br.gov.agu.abakoapi.enums.TipoCorrecaoMonetaria;
-import br.gov.agu.abakoapi.enums.TipoJuros;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,6 +31,8 @@ public class BeneficioAtivoEntity {
 
     private Integer porcentagemRmi;
 
+    private Integer coeficiente;
+
     private LocalDate dib;
 
     private LocalDate dibAnterior;
@@ -41,6 +41,9 @@ public class BeneficioAtivoEntity {
     private BeneficiosEnum beneficio;
 
     private String nb;
+
+    @OneToMany(mappedBy = "beneficioAtivo")
+    private List<BeneficioCessadoEntity> beneficioCessados;
 
     @ManyToOne
     @JoinColumn(name = "calculo_id")

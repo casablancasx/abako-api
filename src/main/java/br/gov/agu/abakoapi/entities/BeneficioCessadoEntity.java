@@ -38,6 +38,10 @@ public class BeneficioCessadoEntity {
     private LocalDate dibAnterior;
 
     @ManyToOne
+    @JoinColumn(name = "beneficio_ativo_id")
+    private BeneficioAtivoEntity beneficioAtivo;
+
+    @ManyToOne
     @JoinColumn(name = "calculo_id")
     private CalculoEntity calculo;
 

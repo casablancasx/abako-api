@@ -17,20 +17,23 @@ public class BeneficioAtivoDTO {
 
     private String nb;
 
-    private BeneficiosEnum especie;
+    private BeneficiosEnum beneficio;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
-    private LocalDate dataInicio;
+    private LocalDate inicioCalculo;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
-    private LocalDate dataFim;
+    private LocalDate fimCalculo;
 
     private BigDecimal rmi;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
+    private LocalDate dib;
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dibAnterior;
 
-    private int coeficiente;
+    private Integer coeficiente;
 
     private List<BeneficioCessadoDTO> beneficiosCessados;
 

@@ -5,6 +5,7 @@ import br.gov.agu.abakoapi.dto.FiltroRequestDTO;
 import br.gov.agu.abakoapi.dto.FiltroResponseDTO;
 import br.gov.agu.abakoapi.entities.CalculoEntity;
 import br.gov.agu.abakoapi.entities.UserEntity;
+import br.gov.agu.abakoapi.repositories.CalculoRepository;
 import br.gov.agu.abakoapi.repositories.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,16 +21,16 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class FiltroService {
 
-    private final UserRepository userRepository;
 
     private final UserService userService;
+    private final FiltrarBeneficiosTreeService filtrarBeneficiosTreeService;
     private final FiltrarDossiePrevidenciarioTreeService filtrarDossiePrevidenciarioTreeService;
+
+    private final CalculoRepository calculoRepository;
 
     private final WebClient webClient;
 
 
-
-    //TODO ISSO AQUI TA MUITO RUIM AINDA
     public FiltroResponseDTO filtrarDossie(FiltroRequestDTO requestDTO) throws JsonProcessingException {
 
         ObjectMapper mapper = webClient.get()
@@ -51,9 +52,15 @@ public class FiltroService {
         JsonNode dossiePrevidenciarioTree = root.get("DossiePrevidenciario");
         calculo = filtrarDossiePrevidenciarioTreeService.filtrarDossiePrevidenciarioTree(calculo, dossiePrevidenciarioTree);
         calculo.setUser(user);
+        calculo = filtrarBeneficiosTreeService.filtrarBeneficiosTree( root.get("beneficios"), calculo);
+
+        calculoRepository.save(calculo);
+
 
         FiltroResponseDTO responseDTO = new FiltroResponseDTO();
-        responseDTO.setCalculo(calculo);
+
+
+
 
 
 
